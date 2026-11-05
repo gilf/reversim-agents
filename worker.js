@@ -61,11 +61,12 @@ async function runAgentLoop(userPrompt) {
 
         // 2. Parse Deterministic JSON
         const decision = JSON.parse(llmResponse);
+        const toolName = (decision.tool || '').toLowerCase();
         contextHistory.push(`Agent Thought: ${decision.thought}`);
         postMessage({ type: 'AGENT_THOUGHT', payload: `Agent Thought: ${decision.thought}` });
 
         // 3. Act (Execute Tool or Finish)
-        if (decision.tool === 'none') {
+        if (toolName === 'none') {
             // Agent is done
             postMessage({ type: 'AGENT_COMPLETE', payload: decision.finalAnswer });
             return;
