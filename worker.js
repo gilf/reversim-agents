@@ -62,6 +62,7 @@ async function runAgentLoop(userPrompt) {
         // 2. Parse Deterministic JSON
         const decision = JSON.parse(llmResponse);
         contextHistory.push(`Agent Thought: ${decision.thought}`);
+        postMessage({ type: 'AGENT_THOUGHT', payload: `Agent Thought: ${decision.thought}` });
 
         // 3. Act (Execute Tool or Finish)
         if (decision.tool === 'none') {
@@ -74,6 +75,7 @@ async function runAgentLoop(userPrompt) {
             // Simulate a background API call inside the worker
             const observation = `The weather in ${decision.toolInput} is sunny.`;
             contextHistory.push(`Observation: ${observation}`);
+            postMessage({ type: 'AGENT_ACTION', payload: `Observation: ${observation}` });
         }
     }
     postMessage({ type: 'AGENT_COMPLETE', payload: "Error: Max steps reached." });
